@@ -1,0 +1,11 @@
+*.png
+*.jpg
+*.json
+*.h5
+*.hdf5
+.DS_Store
+README.me
+requirements.txt
+LICENSE
+
+__pycache__
