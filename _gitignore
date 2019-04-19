@@ -1,8 +1,0 @@
-*.png
-*.jpg
-*.json
-*.h5
-*.hdf5
-.DS_Store
-
-__pycache__
