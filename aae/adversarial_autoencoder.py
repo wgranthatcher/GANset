@@ -4,6 +4,7 @@ matplotlib.use('agg')
 
 from keras.datasets import mnist
 from sklearn.datasets import fetch_olivetti_faces #64x64 ?
+from sklearn.datasets import fetch_lfw_people #62 x 47 ?
 
 from keras.layers import Input, Dense, Reshape, Flatten, Dropout, multiply, GaussianNoise
 from keras.layers import BatchNormalization, Activation, Embedding, ZeroPadding2D
@@ -31,10 +32,18 @@ class AdversarialAutoencoder():
         #self.img_cols = 28
 
         #Olivetti faces
-        self.img_rows = 64
-        self.img_cols = 64
+        #self.img_rows = 64
+        #self.img_cols = 64
 
-        self.channels = 1
+        #LFW People
+        self.img_rows = 62
+        self.img_cols = 47
+
+        #MNIST and Olivetti Faces
+        #self.channels = 1
+
+        #LFW People
+        self.channels = 3
         self.img_shape = (self.img_rows, self.img_cols, self.channels)
         self.encoded_dim = 100
 
@@ -134,15 +143,31 @@ class AdversarialAutoencoder():
 
     def train(self, epochs, batch_size=128, save_interval=50):
 
+        # --- Other method ---
+        # Directory where the face images are stored
+        #data_dir = './data_face'
+        # Input the images from the directory
+        #X_train = self.get_batch(glob(os.path.join(data_dir, '*.jpg'))[:5000], 28, 28, 'RGB')
+        # --- Other method ---
+
         # Load the dataset
         #(X_train, _), (_, _) = mnist.load_data()
 
-        #olivetti Faces -- Not Working
-        X_train = fetch_olivetti_faces(shuffle=True).images
+        #olivetti Faces
+        #X_train = fetch_olivetti_faces(shuffle=True).images
 
+        #LFW People
+        X_train = fetch_lfw_people(color=True).images
+        print(X_train.shape)
+
+        #MNIST ??
         # Rescale -1 to 1
         X_train = (X_train.astype(np.float32) - 127.5) / 127.5
-        X_train = np.expand_dims(X_train, axis=3)
+
+        #MNIST
+        #X_train = np.expand_dims(X_train, axis=3)
+
+        print(X_train.shape)
 
         half_batch = int(batch_size / 2)
 
@@ -207,7 +232,11 @@ class AdversarialAutoencoder():
         cnt = 0
         for i in range(r):
             for j in range(c):
-                axs[i,j].imshow(gen_imgs[cnt, :,:,0], cmap='gray')
+                #LFW People
+                axs[i,j].imshow(gen_imgs[cnt, :,:,:])
+
+                #MNIST and Olivetti Faces
+                #axs[i,j].imshow(gen_imgs[cnt, :,:,0], cmap='gray')
                 axs[i,j].axis('off')
                 cnt += 1
         fig.savefig("images/mnist_%d.png" % epoch)
